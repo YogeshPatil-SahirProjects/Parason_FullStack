@@ -5,7 +5,7 @@ export interface QuoteVerticalDto {
 }
 
 export interface QuoteHeaderDto {
-    quoteID: number;
+    quoteId: number;
     quoteRevision: number;
     quoteNumber: string;
     quoteName: string;
@@ -16,6 +16,8 @@ export interface QuoteHeaderDto {
     notes?: string;
     createdAt: string;
     createdBy: string;
+    modifiedAt?: string;
+    modifiedBy?: string;
     quoteVerticals?: QuoteVerticalDto[];
 }
 
