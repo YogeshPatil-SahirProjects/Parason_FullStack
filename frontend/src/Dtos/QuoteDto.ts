@@ -38,6 +38,7 @@ export interface PaginationParams {
 }
 
 export interface CreateQuoteHeaderDto {
+    quoteNumber: string;
     quoteName: string;
     customerName: string;
     status: string;
