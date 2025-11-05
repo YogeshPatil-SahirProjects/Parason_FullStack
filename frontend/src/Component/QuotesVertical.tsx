@@ -143,7 +143,7 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
         setError(null);
         try {
             const response = await fetch(
-                `https://localhost:7008/api/QuoteVertical/VerticalConfig/${quoteId}/${quoteRevision}/${verticalId}`
+                `http://localhost:5228/api/QuoteVertical/VerticalConfig/${quoteId}/${quoteRevision}/${verticalId}`
             );
             if (!response.ok) throw new Error("Failed to fetch vertical details");
             const data = await response.json();

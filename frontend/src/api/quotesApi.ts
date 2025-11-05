@@ -2,7 +2,7 @@ import type { PaginationParams, PagedResponse, QuoteHeaderDto } from "../Dtos/Qu
 
  
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7008/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5228/api';
 
 export const quotesApi = {
     async getAll(params: PaginationParams): Promise<PagedResponse<QuoteHeaderDto>> {
