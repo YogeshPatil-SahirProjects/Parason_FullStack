@@ -14,7 +14,7 @@ export const quotesApi = {
             ...(params.sortBy && { SortBy: params.sortBy }),
         });
 
-        const response = await fetch(`${API_BASE_URL}/quotes?${queryParams}`);
+        const response = await fetch(`${API_BASE_URL}/quoteheader?${queryParams}`);
 
         if (!response.ok) {
             throw new Error('Failed to fetch quotes');
@@ -24,7 +24,7 @@ export const quotesApi = {
     },
 
     async create(dto: CreateQuoteHeaderDto): Promise<QuoteHeaderDto> {
-        const response = await fetch(`${API_BASE_URL}/quotes`, {
+        const response = await fetch(`${API_BASE_URL}/quoteheader`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

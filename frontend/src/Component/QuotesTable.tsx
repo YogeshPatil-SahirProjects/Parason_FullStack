@@ -232,8 +232,8 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
                             ) : (
                                 quotes.map((quote) => (
                                     <tr
-                                        key={`${quote.quoteID}-${quote.quoteRevision}`}
-                                        className={`cursor-pointer transition-colors hover:bg-gray-50 ${selectedQuote?.quoteID === quote.quoteID
+                                        key={`${quote.quoteId}-${quote.quoteRevision}`}
+                                        className={`cursor-pointer transition-colors hover:bg-gray-50 ${selectedQuote?.quoteId === quote.quoteId
                                             ? "bg-blue-50"
                                             : ""
                                             }`}
@@ -361,7 +361,7 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
                 <div className="mt-2">
                     {selectedQuote.quoteVerticals && selectedQuote.quoteVerticals.length > 0 ? (
                         <QuotesVertical
-                            quoteId={selectedQuote.quoteID}
+                            quoteId={selectedQuote.quoteId}
                             quoteRevision={selectedQuote.quoteRevision}
                             verticalId={selectedQuote.quoteVerticals[0].verticalID}
                         />
