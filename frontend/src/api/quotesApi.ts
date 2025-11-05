@@ -1,4 +1,4 @@
-import type { PaginationParams, PagedResponse, QuoteHeaderDto } from "../Dtos/QuoteDto";
+import type { PaginationParams, PagedResponse, QuoteHeaderDto, CreateQuoteHeaderDto } from "../Dtos/QuoteDto";
 
  
 
@@ -18,6 +18,23 @@ export const quotesApi = {
 
         if (!response.ok) {
             throw new Error('Failed to fetch quotes');
+        }
+
+        return response.json();
+    },
+
+    async create(dto: CreateQuoteHeaderDto): Promise<QuoteHeaderDto> {
+        const response = await fetch(`${API_BASE_URL}/quotes`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dto),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ message: 'Failed to create quote' }));
+            throw new Error(errorData.message || 'Failed to create quote');
         }
 
         return response.json();

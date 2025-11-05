@@ -10,6 +10,7 @@ import {
     Edit,
     Trash2,
     Settings,
+    Plus,
 } from "lucide-react";
 import type { QuoteHeaderDto } from "../Dtos/QuoteDto";
 import { quotesApi } from "../api/quotesApi";
@@ -24,7 +25,11 @@ type SortableColumn =
     | "CreatedAt"
     | "CreatedBy";
 
-const QuotesTable: React.FC = () => {
+interface QuotesTableProps {
+    onNavigate: (page: 'home' | 'about' | 'createQuote') => void;
+}
+
+const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
     const [quotes, setQuotes] = useState<QuoteHeaderDto[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -143,25 +148,35 @@ const QuotesTable: React.FC = () => {
                         <p className="text-sm text-gray-500">Manage and view all quotes</p>
                     </div>
 
-                    {/* Search Bar */}
-                    <form onSubmit={handleSearch} className="flex items-center space-x-2">
-                        <div className="relative">
-                            <input
-                                type="text"
-                                value={searchInput}
-                                onChange={(e) => setSearchInput(e.target.value)}
-                                placeholder="Search quotes..."
-                                className="pl-8 pr-3 py-1.5 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 w-56 text-sm"
-                            />
-                            <Search className="w-4 h-4 text-gray-400 absolute left-2.5 top-1/2 transform -translate-y-1/2" />
-                        </div>
+                    {/* Search Bar and Create Button */}
+                    <div className="flex items-center space-x-2">
+                        <form onSubmit={handleSearch} className="flex items-center space-x-2">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    placeholder="Search quotes..."
+                                    className="pl-8 pr-3 py-1.5 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 w-56 text-sm"
+                                />
+                                <Search className="w-4 h-4 text-gray-400 absolute left-2.5 top-1/2 transform -translate-y-1/2" />
+                            </div>
+                            <button
+                                type="submit"
+                                className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                            >
+                                Search
+                            </button>
+                        </form>
                         <button
-                            type="submit"
-                            className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                            type="button"
+                            onClick={() => onNavigate('createQuote')}
+                            className="px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium flex items-center space-x-1"
                         >
-                            Search
+                            <Plus className="w-4 h-4" />
+                            <span>Create Quote</span>
                         </button>
-                    </form>
+                    </div>
                 </div>
 
 
