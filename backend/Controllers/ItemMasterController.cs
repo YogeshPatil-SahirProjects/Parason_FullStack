@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Parason_Api.Models;
 using Parason_Api.DTOs;
+using Parason_Api.Services.Interfaces;
 
 namespace Parason_Api.Controllers;
 
@@ -9,32 +8,18 @@ namespace Parason_Api.Controllers;
 [Route("api/[controller]")]
 public class ItemMasterController : ControllerBase
 {
-    private readonly ParasonDbContext _context;
+    private readonly IItemMasterService _itemMasterService;
 
-    public ItemMasterController(ParasonDbContext context)
+    public ItemMasterController(IItemMasterService itemMasterService)
     {
-        _context = context;
+        _itemMasterService = itemMasterService;
     }
 
     // GET: api/ItemMaster
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ItemMasterDto>>> GetItemMasters()
     {
-        var items = await _context.ItemMasters
-            .Select(i => new ItemMasterDto
-            {
-                ItemId = i.ItemId,
-                ItemCode = i.ItemCode,
-                ItemName = i.ItemName,
-                Uom = i.Uom,
-                IsActive = i.IsActive,
-                CreatedAt = i.CreatedAt,
-                CreatedBy = i.CreatedBy,
-                ModifiedAt = i.ModifiedAt,
-                ModifiedBy = i.ModifiedBy
-            })
-            .ToListAsync();
-
+        var items = await _itemMasterService.GetAllAsync();
         return Ok(items);
     }
 
@@ -42,21 +27,7 @@ public class ItemMasterController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ItemMasterDto>> GetItemMaster(int id)
     {
-        var item = await _context.ItemMasters
-            .Where(i => i.ItemId == id)
-            .Select(i => new ItemMasterDto
-            {
-                ItemId = i.ItemId,
-                ItemCode = i.ItemCode,
-                ItemName = i.ItemName,
-                Uom = i.Uom,
-                IsActive = i.IsActive,
-                CreatedAt = i.CreatedAt,
-                CreatedBy = i.CreatedBy,
-                ModifiedAt = i.ModifiedAt,
-                ModifiedBy = i.ModifiedBy
-            })
-            .FirstOrDefaultAsync();
+        var item = await _itemMasterService.GetByIdAsync(id);
 
         if (item == null)
         {
@@ -70,52 +41,20 @@ public class ItemMasterController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ItemMasterDto>> CreateItemMaster(CreateItemMasterDto dto)
     {
-        var item = new ItemMaster
-        {
-            ItemCode = dto.ItemCode,
-            ItemName = dto.ItemName,
-            Uom = dto.Uom,
-            IsActive = dto.IsActive
-        };
-
-        _context.ItemMasters.Add(item);
-        await _context.SaveChangesAsync();
-
-        var resultDto = new ItemMasterDto
-        {
-            ItemId = item.ItemId,
-            ItemCode = item.ItemCode,
-            ItemName = item.ItemName,
-            Uom = item.Uom,
-            IsActive = item.IsActive,
-            CreatedAt = item.CreatedAt,
-            CreatedBy = item.CreatedBy,
-            ModifiedAt = item.ModifiedAt,
-            ModifiedBy = item.ModifiedBy
-        };
-
-        return CreatedAtAction(nameof(GetItemMaster), new { id = item.ItemId }, resultDto);
+        var item = await _itemMasterService.CreateAsync(dto);
+        return CreatedAtAction(nameof(GetItemMaster), new { id = item.ItemId }, item);
     }
 
     // PUT: api/ItemMaster/5
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateItemMaster(int id, UpdateItemMasterDto dto)
     {
-        var item = await _context.ItemMasters.FindAsync(id);
+        var success = await _itemMasterService.UpdateAsync(id, dto);
 
-        if (item == null)
+        if (!success)
         {
             return NotFound();
         }
-
-        item.ItemCode = dto.ItemCode;
-        item.ItemName = dto.ItemName;
-        item.Uom = dto.Uom;
-        item.IsActive = dto.IsActive;
-        item.ModifiedAt = DateTime.UtcNow;
-        item.ModifiedBy = "System"; // TODO: Get from authenticated user
-
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }
@@ -124,15 +63,12 @@ public class ItemMasterController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteItemMaster(int id)
     {
-        var item = await _context.ItemMasters.FindAsync(id);
+        var success = await _itemMasterService.DeleteAsync(id);
 
-        if (item == null)
+        if (!success)
         {
             return NotFound();
         }
-
-        _context.ItemMasters.Remove(item);
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }

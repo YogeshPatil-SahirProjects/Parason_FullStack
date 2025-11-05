@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Parason_Api.Models;  
+using Parason_Api.Models;
+using Parason_Api.Services;
+using Parason_Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,22 @@ builder.Services.AddSwaggerGen();
 //Database context
 builder.Services.AddDbContext<ParasonDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register application services
+builder.Services.AddScoped<IAttributeDefService, AttributeDefService>();
+builder.Services.AddScoped<IAttributeListValueService, AttributeListValueService>();
+builder.Services.AddScoped<IEquipmentService, EquipmentService>();
+builder.Services.AddScoped<IItemMasterService, ItemMasterService>();
+builder.Services.AddScoped<IModelService, ModelService>();
+builder.Services.AddScoped<IPriceService, PriceService>();
+builder.Services.AddScoped<IProcessService, ProcessService>();
+builder.Services.AddScoped<IQuoteHeaderService, QuoteHeaderService>();
+builder.Services.AddScoped<IQuoteEquipmentOrModelService, QuoteEquipmentOrModelService>();
+builder.Services.AddScoped<IQuoteVerticalService, QuoteVerticalService>();
+builder.Services.AddScoped<IScopeOfSupplyService, ScopeOfSupplyService>();
+builder.Services.AddScoped<ISeriesService, SeriesService>();
+builder.Services.AddScoped<ISpecDetailService, SpecDetailService>();
+builder.Services.AddScoped<IVerticalAreaService, VerticalAreaService>();
 
 
 // CORS
