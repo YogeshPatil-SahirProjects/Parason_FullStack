@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Parason_Api.Models;
 using Parason_Api.DTOs;
+using Parason_Api.Services.Interfaces;
 
 namespace Parason_Api.Controllers;
 
@@ -9,113 +8,53 @@ namespace Parason_Api.Controllers;
 [Route("api/[controller]")]
 public class VerticalAreaController : ControllerBase
 {
-    private readonly ParasonDbContext _context;
+    private readonly IVerticalAreaService _verticalAreaService;
 
-    public VerticalAreaController(ParasonDbContext context)
+    public VerticalAreaController(IVerticalAreaService verticalAreaService)
     {
-        _context = context;
+        _verticalAreaService = verticalAreaService;
     }
 
     // GET: api/VerticalArea
     [HttpGet]
     public async Task<ActionResult<IEnumerable<VerticalAreaDto>>> GetVerticalAreas()
     {
-        var verticalAreas = await _context.VerticalAreas
-            .Select(v => new VerticalAreaDto
-            {
-                VerticalId = v.VerticalId,
-                VerticalCode = v.VerticalCode,
-                VerticalName = v.VerticalName,
-                Description = v.Description,
-                IsActive = v.IsActive,
-                CreatedAt = v.CreatedAt,
-                CreatedBy = v.CreatedBy,
-                ModifiedAt = v.ModifiedAt,
-                ModifiedBy = v.ModifiedBy
-            })
-            .ToListAsync();
-
-        return Ok(verticalAreas);
+        var verticals = await _verticalAreaService.GetAllAsync();
+        return Ok(verticals);
     }
 
     // GET: api/VerticalArea/5
     [HttpGet("{id}")]
     public async Task<ActionResult<VerticalAreaDto>> GetVerticalArea(int id)
     {
-        var verticalArea = await _context.VerticalAreas
-            .Where(v => v.VerticalId == id)
-            .Select(v => new VerticalAreaDto
-            {
-                VerticalId = v.VerticalId,
-                VerticalCode = v.VerticalCode,
-                VerticalName = v.VerticalName,
-                Description = v.Description,
-                IsActive = v.IsActive,
-                CreatedAt = v.CreatedAt,
-                CreatedBy = v.CreatedBy,
-                ModifiedAt = v.ModifiedAt,
-                ModifiedBy = v.ModifiedBy
-            })
-            .FirstOrDefaultAsync();
+        var vertical = await _verticalAreaService.GetByIdAsync(id);
 
-        if (verticalArea == null)
+        if (vertical == null)
         {
             return NotFound();
         }
 
-        return Ok(verticalArea);
+        return Ok(vertical);
     }
 
     // POST: api/VerticalArea
     [HttpPost]
     public async Task<ActionResult<VerticalAreaDto>> CreateVerticalArea(CreateVerticalAreaDto dto)
     {
-        var verticalArea = new VerticalArea
-        {
-            VerticalCode = dto.VerticalCode,
-            VerticalName = dto.VerticalName,
-            Description = dto.Description,
-            IsActive = dto.IsActive
-        };
-
-        _context.VerticalAreas.Add(verticalArea);
-        await _context.SaveChangesAsync();
-
-        var resultDto = new VerticalAreaDto
-        {
-            VerticalId = verticalArea.VerticalId,
-            VerticalCode = verticalArea.VerticalCode,
-            VerticalName = verticalArea.VerticalName,
-            Description = verticalArea.Description,
-            IsActive = verticalArea.IsActive,
-            CreatedAt = verticalArea.CreatedAt,
-            CreatedBy = verticalArea.CreatedBy,
-            ModifiedAt = verticalArea.ModifiedAt,
-            ModifiedBy = verticalArea.ModifiedBy
-        };
-
-        return CreatedAtAction(nameof(GetVerticalArea), new { id = verticalArea.VerticalId }, resultDto);
+        var vertical = await _verticalAreaService.CreateAsync(dto);
+        return CreatedAtAction(nameof(GetVerticalArea), new { id = vertical.VerticalId }, vertical);
     }
 
     // PUT: api/VerticalArea/5
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateVerticalArea(int id, UpdateVerticalAreaDto dto)
     {
-        var verticalArea = await _context.VerticalAreas.FindAsync(id);
+        var success = await _verticalAreaService.UpdateAsync(id, dto);
 
-        if (verticalArea == null)
+        if (!success)
         {
             return NotFound();
         }
-
-        verticalArea.VerticalCode = dto.VerticalCode;
-        verticalArea.VerticalName = dto.VerticalName;
-        verticalArea.Description = dto.Description;
-        verticalArea.IsActive = dto.IsActive;
-        verticalArea.ModifiedAt = DateTime.UtcNow;
-        verticalArea.ModifiedBy = "System"; // TODO: Get from authenticated user
-
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }
@@ -124,15 +63,12 @@ public class VerticalAreaController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteVerticalArea(int id)
     {
-        var verticalArea = await _context.VerticalAreas.FindAsync(id);
+        var success = await _verticalAreaService.DeleteAsync(id);
 
-        if (verticalArea == null)
+        if (!success)
         {
             return NotFound();
         }
-
-        _context.VerticalAreas.Remove(verticalArea);
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Parason_Api.Models;
 using Parason_Api.DTOs;
+using Parason_Api.Services.Interfaces;
 
 namespace Parason_Api.Controllers;
 
@@ -9,30 +8,18 @@ namespace Parason_Api.Controllers;
 [Route("api/[controller]")]
 public class AttributeListValueController : ControllerBase
 {
-    private readonly ParasonDbContext _context;
+    private readonly IAttributeListValueService _attributeListValueService;
 
-    public AttributeListValueController(ParasonDbContext context)
+    public AttributeListValueController(IAttributeListValueService attributeListValueService)
     {
-        _context = context;
+        _attributeListValueService = attributeListValueService;
     }
 
     // GET: api/AttributeListValue
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AttributeListValueDto>>> GetAttributeListValues()
     {
-        var listValues = await _context.AttributeListValues
-            .Include(l => l.Attribute)
-            .Select(l => new AttributeListValueDto
-            {
-                ListValueId = l.ListValueId,
-                AttributeId = l.AttributeId,
-                AttributeValue = l.AttributeValue,
-                Display = l.Display,
-                SequenceNo = l.SequenceNo,
-                AttributeName = l.Attribute.AttributeName
-            })
-            .ToListAsync();
-
+        var listValues = await _attributeListValueService.GetAllAsync();
         return Ok(listValues);
     }
 
@@ -40,19 +27,7 @@ public class AttributeListValueController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<AttributeListValueDto>> GetAttributeListValue(int id)
     {
-        var listValue = await _context.AttributeListValues
-            .Include(l => l.Attribute)
-            .Where(l => l.ListValueId == id)
-            .Select(l => new AttributeListValueDto
-            {
-                ListValueId = l.ListValueId,
-                AttributeId = l.AttributeId,
-                AttributeValue = l.AttributeValue,
-                Display = l.Display,
-                SequenceNo = l.SequenceNo,
-                AttributeName = l.Attribute.AttributeName
-            })
-            .FirstOrDefaultAsync();
+        var listValue = await _attributeListValueService.GetByIdAsync(id);
 
         if (listValue == null)
         {
@@ -62,75 +37,24 @@ public class AttributeListValueController : ControllerBase
         return Ok(listValue);
     }
 
-    // GET: api/AttributeListValue/ByAttribute/5
-    [HttpGet("ByAttribute/{attributeId}")]
-    public async Task<ActionResult<IEnumerable<AttributeListValueDto>>> GetListValuesByAttribute(int attributeId)
-    {
-        var listValues = await _context.AttributeListValues
-            .Where(l => l.AttributeId == attributeId)
-            .Include(l => l.Attribute)
-            .Select(l => new AttributeListValueDto
-            {
-                ListValueId = l.ListValueId,
-                AttributeId = l.AttributeId,
-                AttributeValue = l.AttributeValue,
-                Display = l.Display,
-                SequenceNo = l.SequenceNo,
-                AttributeName = l.Attribute.AttributeName
-            })
-            .OrderBy(l => l.SequenceNo)
-            .ToListAsync();
-
-        return Ok(listValues);
-    }
-
     // POST: api/AttributeListValue
     [HttpPost]
     public async Task<ActionResult<AttributeListValueDto>> CreateAttributeListValue(CreateAttributeListValueDto dto)
     {
-        var listValue = new AttributeListValue
-        {
-            AttributeId = dto.AttributeId,
-            AttributeValue = dto.AttributeValue,
-            Display = dto.Display,
-            SequenceNo = dto.SequenceNo
-        };
-
-        _context.AttributeListValues.Add(listValue);
-        await _context.SaveChangesAsync();
-
-        var attribute = await _context.AttributeDefs.FindAsync(dto.AttributeId);
-
-        var resultDto = new AttributeListValueDto
-        {
-            ListValueId = listValue.ListValueId,
-            AttributeId = listValue.AttributeId,
-            AttributeValue = listValue.AttributeValue,
-            Display = listValue.Display,
-            SequenceNo = listValue.SequenceNo,
-            AttributeName = attribute?.AttributeName
-        };
-
-        return CreatedAtAction(nameof(GetAttributeListValue), new { id = listValue.ListValueId }, resultDto);
+        var listValue = await _attributeListValueService.CreateAsync(dto);
+        return CreatedAtAction(nameof(GetAttributeListValue), new { id = listValue.ListValueId }, listValue);
     }
 
     // PUT: api/AttributeListValue/5
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAttributeListValue(int id, UpdateAttributeListValueDto dto)
     {
-        var listValue = await _context.AttributeListValues.FindAsync(id);
+        var success = await _attributeListValueService.UpdateAsync(id, dto);
 
-        if (listValue == null)
+        if (!success)
         {
             return NotFound();
         }
-
-        listValue.AttributeId = dto.AttributeId;
-        listValue.AttributeValue = dto.AttributeValue;
-        listValue.Display = dto.Display;
-        listValue.SequenceNo = dto.SequenceNo;
-
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }
@@ -139,15 +63,12 @@ public class AttributeListValueController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAttributeListValue(int id)
     {
-        var listValue = await _context.AttributeListValues.FindAsync(id);
+        var success = await _attributeListValueService.DeleteAsync(id);
 
-        if (listValue == null)
+        if (!success)
         {
             return NotFound();
         }
-
-        _context.AttributeListValues.Remove(listValue);
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }

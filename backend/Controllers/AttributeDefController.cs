@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Parason_Api.Models;
 using Parason_Api.DTOs;
+using Parason_Api.Services.Interfaces;
 
 namespace Parason_Api.Controllers;
 
@@ -9,34 +8,18 @@ namespace Parason_Api.Controllers;
 [Route("api/[controller]")]
 public class AttributeDefController : ControllerBase
 {
-    private readonly ParasonDbContext _context;
+    private readonly IAttributeDefService _attributeDefService;
 
-    public AttributeDefController(ParasonDbContext context)
+    public AttributeDefController(IAttributeDefService attributeDefService)
     {
-        _context = context;
+        _attributeDefService = attributeDefService;
     }
 
     // GET: api/AttributeDef
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AttributeDefDto>>> GetAttributeDefs()
     {
-        var attributes = await _context.AttributeDefs
-            .Select(a => new AttributeDefDto
-            {
-                AttributeId = a.AttributeId,
-                AttributeCode = a.AttributeCode,
-                AttributeName = a.AttributeName,
-                DataType = a.DataType,
-                UnitDefault = a.UnitDefault,
-                Description = a.Description,
-                IsActive = a.IsActive,
-                CreatedAt = a.CreatedAt,
-                CreatedBy = a.CreatedBy,
-                ModifiedAt = a.ModifiedAt,
-                ModifiedBy = a.ModifiedBy
-            })
-            .ToListAsync();
-
+        var attributes = await _attributeDefService.GetAllAsync();
         return Ok(attributes);
     }
 
@@ -44,23 +27,7 @@ public class AttributeDefController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<AttributeDefDto>> GetAttributeDef(int id)
     {
-        var attribute = await _context.AttributeDefs
-            .Where(a => a.AttributeId == id)
-            .Select(a => new AttributeDefDto
-            {
-                AttributeId = a.AttributeId,
-                AttributeCode = a.AttributeCode,
-                AttributeName = a.AttributeName,
-                DataType = a.DataType,
-                UnitDefault = a.UnitDefault,
-                Description = a.Description,
-                IsActive = a.IsActive,
-                CreatedAt = a.CreatedAt,
-                CreatedBy = a.CreatedBy,
-                ModifiedAt = a.ModifiedAt,
-                ModifiedBy = a.ModifiedBy
-            })
-            .FirstOrDefaultAsync();
+        var attribute = await _attributeDefService.GetByIdAsync(id);
 
         if (attribute == null)
         {
@@ -74,58 +41,20 @@ public class AttributeDefController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<AttributeDefDto>> CreateAttributeDef(CreateAttributeDefDto dto)
     {
-        var attribute = new AttributeDef
-        {
-            AttributeCode = dto.AttributeCode,
-            AttributeName = dto.AttributeName,
-            DataType = dto.DataType,
-            UnitDefault = dto.UnitDefault,
-            Description = dto.Description,
-            IsActive = dto.IsActive
-        };
-
-        _context.AttributeDefs.Add(attribute);
-        await _context.SaveChangesAsync();
-
-        var resultDto = new AttributeDefDto
-        {
-            AttributeId = attribute.AttributeId,
-            AttributeCode = attribute.AttributeCode,
-            AttributeName = attribute.AttributeName,
-            DataType = attribute.DataType,
-            UnitDefault = attribute.UnitDefault,
-            Description = attribute.Description,
-            IsActive = attribute.IsActive,
-            CreatedAt = attribute.CreatedAt,
-            CreatedBy = attribute.CreatedBy,
-            ModifiedAt = attribute.ModifiedAt,
-            ModifiedBy = attribute.ModifiedBy
-        };
-
-        return CreatedAtAction(nameof(GetAttributeDef), new { id = attribute.AttributeId }, resultDto);
+        var attribute = await _attributeDefService.CreateAsync(dto);
+        return CreatedAtAction(nameof(GetAttributeDef), new { id = attribute.AttributeId }, attribute);
     }
 
     // PUT: api/AttributeDef/5
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAttributeDef(int id, UpdateAttributeDefDto dto)
     {
-        var attribute = await _context.AttributeDefs.FindAsync(id);
+        var success = await _attributeDefService.UpdateAsync(id, dto);
 
-        if (attribute == null)
+        if (!success)
         {
             return NotFound();
         }
-
-        attribute.AttributeCode = dto.AttributeCode;
-        attribute.AttributeName = dto.AttributeName;
-        attribute.DataType = dto.DataType;
-        attribute.UnitDefault = dto.UnitDefault;
-        attribute.Description = dto.Description;
-        attribute.IsActive = dto.IsActive;
-        attribute.ModifiedAt = DateTime.UtcNow;
-        attribute.ModifiedBy = "System"; // TODO: Get from authenticated user
-
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }
@@ -134,15 +63,12 @@ public class AttributeDefController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAttributeDef(int id)
     {
-        var attribute = await _context.AttributeDefs.FindAsync(id);
+        var success = await _attributeDefService.DeleteAsync(id);
 
-        if (attribute == null)
+        if (!success)
         {
             return NotFound();
         }
-
-        _context.AttributeDefs.Remove(attribute);
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }
