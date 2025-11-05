@@ -67,6 +67,11 @@ namespace Parason_Api.DTOs
             modelBuilder.Entity<QuoteHeader>()
                 .HasKey(qh => new { qh.QuoteID, qh.QuoteRevision });
 
+            // Configure QuoteID as identity column
+            modelBuilder.Entity<QuoteHeader>()
+                .Property(qh => qh.QuoteID)
+                .ValueGeneratedOnAdd();
+
             // Configure relationships to prevent cascade delete cycles
             modelBuilder.Entity<VerticalProcess>()
                 .HasOne(vp => vp.VerticalArea)
