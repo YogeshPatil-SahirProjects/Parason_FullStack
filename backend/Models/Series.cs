@@ -1,45 +1,37 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Parason_Api.Models
+namespace Parason_Api.Models;
+
+public partial class Series
 {
-    [Table("Series", Schema = "dbo")]
-    public class Series
-    {
-        [Key]
-        public int SeriesID { get; set; }
+    public int SeriesId { get; set; }
 
-        public int EquipmentID { get; set; }
+    public int EquipmentId { get; set; }
 
-        [Required, MaxLength(50)]
-        public string SeriesCode { get; set; } = string.Empty;
+    public string SeriesCode { get; set; } = null!;
 
-        [Required, MaxLength(200)]
-        public string SeriesName { get; set; } = string.Empty;
+    public string SeriesName { get; set; } = null!;
 
-        [MaxLength(1000)]
-        public string? Description { get; set; }
+    public string? Description { get; set; }
 
-        public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }
 
-        [MaxLength(100)]
-        public string CreatedBy { get; set; } = "System";
+    public string CreatedBy { get; set; } = null!;
 
-        public DateTime? ModifiedAt { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
-        [MaxLength(100)]
-        public string? ModifiedBy { get; set; }
+    public string? ModifiedBy { get; set; }
 
-        // Navigation properties
-        [ForeignKey("EquipmentID")]
-        public virtual Equipment Equipment { get; set; } = null!;
+    public virtual Equipment Equipment { get; set; } = null!;
 
-        public virtual ICollection<Model> Models { get; set; } = new List<Model>();
-        public virtual ICollection<SeriesAttribute> SeriesAttributes { get; set; } = new List<SeriesAttribute>();
-        public virtual ICollection<ImageRef> ImageRefs { get; set; } = new List<ImageRef>();
-        public virtual ICollection<QuoteEquipmentOrModel> QuoteEquipmentOrModels { get; set; } = new List<QuoteEquipmentOrModel>();
-    }
+    public virtual ICollection<ImageRef> ImageRefs { get; set; } = new List<ImageRef>();
 
+    public virtual ICollection<LSeriesAttribute> LSeriesAttributes { get; set; } = new List<LSeriesAttribute>();
+
+    public virtual ICollection<Model> Models { get; set; } = new List<Model>();
+
+    public virtual ICollection<QuoteEquipmentOrModel> QuoteEquipmentOrModels { get; set; } = new List<QuoteEquipmentOrModel>();
 }

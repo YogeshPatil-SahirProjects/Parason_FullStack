@@ -1,37 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Parason_Api.Models
+namespace Parason_Api.Models;
+
+public partial class ImageRef
 {
-    [Table("ImageRef", Schema = "dbo")]
-    public class ImageRef
-    {
-        [Key]
-        public int ImageRefID { get; set; }
+    public int ImageRefId { get; set; }
 
-        public int? EquipmentID { get; set; }
-        public int? SeriesID { get; set; }
-        public int? ModelID { get; set; }
+    public int? EquipmentId { get; set; }
 
-        [Required, MaxLength(50)]
-        public string ImagePurpose { get; set; } = string.Empty;
+    public int? SeriesId { get; set; }
 
-        [Required, MaxLength(255)]
-        public string ImageFileName { get; set; } = string.Empty;
+    public int? ModelId { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string ImagePurpose { get; set; } = null!;
 
-        [MaxLength(100)]
-        public string CreatedBy { get; set; } = "System";
+    public string ImageFileName { get; set; } = null!;
 
-        // Navigation properties
-        [ForeignKey("EquipmentID")]
-        public virtual Equipment? Equipment { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-        [ForeignKey("SeriesID")]
-        public virtual Series? Series { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-        [ForeignKey("ModelID")]
-        public virtual Model? Model { get; set; }
-    }
+    public virtual Equipment? Equipment { get; set; }
+
+    public virtual Model? Model { get; set; }
+
+    public virtual Series? Series { get; set; }
 }

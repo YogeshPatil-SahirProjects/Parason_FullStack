@@ -1,49 +1,35 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Parason_Api.Models
+namespace Parason_Api.Models;
+
+public partial class QuoteHeader
 {
-    [Table("QuoteHeader", Schema = "dbo")]
-    public class QuoteHeader
-    {
-        [Key, Column(Order = 0)]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int QuoteID { get; set; }
+    public int QuoteId { get; set; }
 
-        [Key, Column(Order = 1)]
-        public byte QuoteRevision { get; set; }
+    public byte QuoteRevision { get; set; }
 
-        [Required, MaxLength(30)]
-        public string QuoteNumber { get; set; } = string.Empty;
+    public string QuoteNumber { get; set; } = null!;
 
-        [Required, MaxLength(100)]
-        public string QuoteName { get; set; } = string.Empty;
+    public string QuoteName { get; set; } = null!;
 
-        [Required, MaxLength(100)]
-        public string CustomerName { get; set; } = string.Empty;
+    public string CustomerName { get; set; } = null!;
 
-        [Required, MaxLength(30)]
-        public string Status { get; set; } = "Draft";
+    public string Status { get; set; } = null!;
 
-        [Required, MaxLength(3)]
-        public string Currency { get; set; } = "INR";
+    public string Currency { get; set; } = null!;
 
-        public int ValidityDays { get; set; } = 30;
+    public int ValidityDays { get; set; }
 
-        [MaxLength(2000)]
-        public string? Notes { get; set; }
+    public string? Notes { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }
 
-        [MaxLength(100)]
-        public string CreatedBy { get; set; } = "System";
+    public string CreatedBy { get; set; } = null!;
 
-        public DateTime? ModifiedAt { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
-        [MaxLength(100)]
-        public string? ModifiedBy { get; set; }
+    public string? ModifiedBy { get; set; }
 
-        // Navigation properties
-        public virtual ICollection<QuoteVertical> QuoteVerticals { get; set; } = new List<QuoteVertical>();
-    }
+    public virtual ICollection<QuoteVertical> QuoteVerticals { get; set; } = new List<QuoteVertical>();
 }

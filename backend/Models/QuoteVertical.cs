@@ -1,39 +1,35 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Parason_Api.Models
+namespace Parason_Api.Models;
+
+public partial class QuoteVertical
 {
-    [Table("Quote_Vertical", Schema = "dbo")]
-    public class QuoteVertical
-    {
-        [Key]
-        public int RecordID { get; set; }
+    public int RecordId { get; set; }
 
-        public int QuoteID { get; set; }
-        public byte QuoteRevision { get; set; }
+    public int QuoteId { get; set; }
 
-        [Required, MaxLength(50)]
-        public string Layer { get; set; } = string.Empty;
+    public byte QuoteRevision { get; set; }
 
-        public int VerticalID { get; set; }
-        public int ProcessID { get; set; }
+    public string Layer { get; set; } = null!;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public int VerticalId { get; set; }
 
-        [MaxLength(100)]
-        public string CreatedBy { get; set; } = "System";
+    public int ProcessId { get; set; }
 
-        // Navigation properties
-        public virtual QuoteHeader QuoteHeader { get; set; } = null!;
+    public DateTime CreatedAt { get; set; }
 
-        [ForeignKey("VerticalID")]
-        public virtual VerticalArea VerticalArea { get; set; } = null!;
+    public string CreatedBy { get; set; } = null!;
 
-        [ForeignKey("ProcessID")]
-        public virtual Process Process { get; set; } = null!;
+    public virtual Process Process { get; set; } = null!;
 
-        public virtual ICollection<QuoteEquipmentOrModel> QuoteEquipmentOrModels { get; set; } = new List<QuoteEquipmentOrModel>();
-        public virtual ICollection<ScopeOfSupply> ScopeOfSupplies { get; set; } = new List<ScopeOfSupply>();
-        public virtual ICollection<SpecDetails> SpecDetails { get; set; } = new List<SpecDetails>();
-    }
+    public virtual ICollection<QuoteEquipmentOrModel> QuoteEquipmentOrModels { get; set; } = new List<QuoteEquipmentOrModel>();
+
+    public virtual QuoteHeader QuoteHeader { get; set; } = null!;
+
+    public virtual ICollection<ScopeOfSupply> ScopeOfSupplies { get; set; } = new List<ScopeOfSupply>();
+
+    public virtual ICollection<SpecDetail> SpecDetails { get; set; } = new List<SpecDetail>();
+
+    public virtual VerticalArea Vertical { get; set; } = null!;
 }

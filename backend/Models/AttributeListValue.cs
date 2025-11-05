@@ -1,29 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Parason_Api.Models
+namespace Parason_Api.Models;
+
+public partial class AttributeListValue
 {
-    [Table("AttributeListValue", Schema = "dbo")]
-    public class AttributeListValue
-    {
-        [Key]
-        public int ListValueID { get; set; }
+    public int ListValueId { get; set; }
 
-        public int AttributeID { get; set; }
+    public int AttributeId { get; set; }
 
-        [Required, MaxLength(200)]
-        public string AttributeValue { get; set; } = string.Empty;
+    public string AttributeValue { get; set; } = null!;
 
-        [MaxLength(200)]
-        public string? Display { get; set; }
+    public string? Display { get; set; }
 
-        public int? SequenceNo { get; set; }
+    public int? SequenceNo { get; set; }
 
-        // Navigation properties
-        [ForeignKey("AttributeID")]
-        public virtual AttributeDef AttributeDef { get; set; } = null!;
+    public virtual AttributeDef Attribute { get; set; } = null!;
 
-        public virtual ICollection<EquipmentAttributeValue> EquipmentAttributeValues { get; set; } = new List<EquipmentAttributeValue>();
-        public virtual ICollection<SpecDetails> SpecDetails { get; set; } = new List<SpecDetails>();
-    }
+    public virtual ICollection<LEquipmentAttributeValue> LEquipmentAttributeValues { get; set; } = new List<LEquipmentAttributeValue>();
+
+    public virtual ICollection<SpecDetail> SpecDetails { get; set; } = new List<SpecDetail>();
 }

@@ -1,27 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Parason_Api.Models
+namespace Parason_Api.Models;
+
+public partial class ScopeOfSupply
 {
-    [Table("ScopeOfSupply", Schema = "dbo")]
-    public class ScopeOfSupply
-    {
-        public int RecordID { get; set; }
-        public int? ModelID { get; set; }
-        public int ItemId { get; set; }
+    public int RecordId { get; set; }
 
-        [Column(TypeName = "decimal(18,4)")]
-        public decimal? Price_INR { get; set; }
-        public bool IsMandatory { get; set; }
-        public int Quantity { get; set; } = 1;
+    public int? ModelId { get; set; }
 
-        // Navigation properties
-        [ForeignKey("RecordID")]
-        public virtual QuoteVertical QuoteVertical { get; set; } = null!;
+    public int ItemId { get; set; }
 
-        [ForeignKey("ModelID")]
-        public virtual Model? Model { get; set; }
+    public decimal? PriceInr { get; set; }
 
-        [ForeignKey("ItemId")]
-        public virtual ItemMaster Item { get; set; } = null!;        
-    }
+    public int Quantity { get; set; }
+
+    public virtual ItemMaster Item { get; set; } = null!;
+
+    public virtual Model? Model { get; set; }
+
+    public virtual QuoteVertical Record { get; set; } = null!;
 }

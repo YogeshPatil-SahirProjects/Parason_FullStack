@@ -1,46 +1,39 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Parason_Api.Models
+namespace Parason_Api.Models;
+
+public partial class AttributeDef
 {
-    [Table("AttributeDef", Schema = "dbo")]
-    public class AttributeDef
-    {
-        [Key]
-        public int AttributeID { get; set; }
+    public int AttributeId { get; set; }
 
-        [Required, MaxLength(50)]
-        public string AttributeCode { get; set; } = string.Empty;
+    public string AttributeCode { get; set; } = null!;
 
-        [Required, MaxLength(200)]
-        public string AttributeName { get; set; } = string.Empty;
+    public string AttributeName { get; set; } = null!;
 
-        [Required, MaxLength(20)]
-        public string DataType { get; set; } = string.Empty; // number, text, bool, list
+    public string DataType { get; set; } = null!;
 
-        [MaxLength(50)]
-        public string? UnitDefault { get; set; }
+    public string? UnitDefault { get; set; }
 
-        [MaxLength(1000)]
-        public string? Description { get; set; }
+    public string? Description { get; set; }
 
-        public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }
 
-        [MaxLength(100)]
-        public string CreatedBy { get; set; } = "System";
+    public string CreatedBy { get; set; } = null!;
 
-        public DateTime? ModifiedAt { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
-        [MaxLength(100)]
-        public string? ModifiedBy { get; set; }
+    public string? ModifiedBy { get; set; }
 
-        // Navigation properties
-        public virtual ICollection<AttributeListValue> ListValues { get; set; } = new List<AttributeListValue>();
-        public virtual ICollection<EquipmentAttribute> EquipmentAttributes { get; set; } = new List<EquipmentAttribute>();
-        public virtual ICollection<EquipmentAttributeValue> EquipmentAttributeValues { get; set; } = new List<EquipmentAttributeValue>();
-        public virtual ICollection<SeriesAttribute> SeriesAttributes { get; set; } = new List<SeriesAttribute>();
-        public virtual ICollection<SpecDetails> SpecDetails { get; set; } = new List<SpecDetails>();
-    }
+    public virtual ICollection<AttributeListValue> AttributeListValues { get; set; } = new List<AttributeListValue>();
+
+    public virtual ICollection<LEquipmentAttributeValue> LEquipmentAttributeValues { get; set; } = new List<LEquipmentAttributeValue>();
+
+    public virtual ICollection<LEquipmentAttribute> LEquipmentAttributes { get; set; } = new List<LEquipmentAttribute>();
+
+    public virtual ICollection<LSeriesAttribute> LSeriesAttributes { get; set; } = new List<LSeriesAttribute>();
+
+    public virtual ICollection<SpecDetail> SpecDetails { get; set; } = new List<SpecDetail>();
 }

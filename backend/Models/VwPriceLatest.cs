@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parason_Api.Models;
 
-public partial class Price
+public partial class VwPriceLatest
 {
     public int PriceId { get; set; }
 
@@ -21,9 +21,5 @@ public partial class Price
 
     public string CreatedBy { get; set; } = null!;
 
-    public virtual Equipment? Equipment { get; set; }
-
-    public virtual ItemMaster? Item { get; set; }
-
-    public virtual Model? Model { get; set; }
+    public long? Rn { get; set; }
 }

@@ -1,43 +1,41 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Parason_Api.Models
+namespace Parason_Api.Models;
+
+public partial class Equipment
 {
-    [Table("Equipment", Schema = "dbo")]
-    public class Equipment
-    {
-        [Key]
-        public int EquipmentID { get; set; }
+    public int EquipmentId { get; set; }
 
-        [Required, MaxLength(50)]
-        public string EquipmentCode { get; set; } = string.Empty;
+    public string EquipmentCode { get; set; } = null!;
 
-        [Required, MaxLength(200)]
-        public string EquipmentName { get; set; } = string.Empty;
+    public string EquipmentName { get; set; } = null!;
 
-        [MaxLength(1000)]
-        public string? Description { get; set; }
+    public string? Description { get; set; }
 
-        public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }
 
-        [MaxLength(100)]
-        public string CreatedBy { get; set; } = "System";
+    public string CreatedBy { get; set; } = null!;
 
-        public DateTime? ModifiedAt { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
-        [MaxLength(100)]
-        public string? ModifiedBy { get; set; }
+    public string? ModifiedBy { get; set; }
 
-        // Navigation properties
-        public virtual ICollection<Series> Series { get; set; } = new List<Series>();
-        public virtual ICollection<ProcessEquipment> ProcessEquipments { get; set; } = new List<ProcessEquipment>();
-        public virtual ICollection<EquipmentAttribute> EquipmentAttributes { get; set; } = new List<EquipmentAttribute>();
-        public virtual ICollection<EquipmentAttributeValue> EquipmentAttributeValues { get; set; } = new List<EquipmentAttributeValue>();
-        public virtual ICollection<ImageRef> ImageRefs { get; set; } = new List<ImageRef>();
-        public virtual ICollection<Price> Prices { get; set; } = new List<Price>();
-        public virtual ICollection<QuoteEquipmentOrModel> QuoteEquipmentOrModels { get; set; } = new List<QuoteEquipmentOrModel>();
-        public virtual ICollection<SpecDetails> SpecDetails { get; set; } = new List<SpecDetails>();
-    }
+    public virtual ICollection<ImageRef> ImageRefs { get; set; } = new List<ImageRef>();
+
+    public virtual ICollection<LEquipmentAttributeValue> LEquipmentAttributeValues { get; set; } = new List<LEquipmentAttributeValue>();
+
+    public virtual ICollection<LEquipmentAttribute> LEquipmentAttributes { get; set; } = new List<LEquipmentAttribute>();
+
+    public virtual ICollection<LProcessEquipment> LProcessEquipments { get; set; } = new List<LProcessEquipment>();
+
+    public virtual ICollection<Price> Prices { get; set; } = new List<Price>();
+
+    public virtual ICollection<QuoteEquipmentOrModel> QuoteEquipmentOrModels { get; set; } = new List<QuoteEquipmentOrModel>();
+
+    public virtual ICollection<Series> Series { get; set; } = new List<Series>();
+
+    public virtual ICollection<SpecDetail> SpecDetails { get; set; } = new List<SpecDetail>();
 }

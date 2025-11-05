@@ -1,38 +1,31 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Parason_Api.Models
+namespace Parason_Api.Models;
+
+public partial class Process
 {
-    [Table("Process", Schema = "dbo")]
-    public class Process
-    {
-        [Key]
-        public int ProcessID { get; set; }
+    public int ProcessId { get; set; }
 
-        [Required, MaxLength(50)]
-        public string ProcessCode { get; set; } = string.Empty;
+    public string ProcessCode { get; set; } = null!;
 
-        [Required, MaxLength(200)]
-        public string ProcessName { get; set; } = string.Empty;
+    public string ProcessName { get; set; } = null!;
 
-        [MaxLength(1000)]
-        public string? Description { get; set; }
+    public string? Description { get; set; }
 
-        public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }
 
-        [MaxLength(100)]
-        public string CreatedBy { get; set; } = "System";
+    public string CreatedBy { get; set; } = null!;
 
-        public DateTime? ModifiedAt { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
-        [MaxLength(100)]
-        public string? ModifiedBy { get; set; }
+    public string? ModifiedBy { get; set; }
 
-        // Navigation properties
-        public virtual ICollection<VerticalProcess> VerticalProcesses { get; set; } = new List<VerticalProcess>();
-        public virtual ICollection<ProcessEquipment> ProcessEquipments { get; set; } = new List<ProcessEquipment>();
-        public virtual ICollection<QuoteVertical> QuoteVerticals { get; set; } = new List<QuoteVertical>();
-    }
+    public virtual ICollection<LProcessEquipment> LProcessEquipments { get; set; } = new List<LProcessEquipment>();
+
+    public virtual ICollection<LVerticalProcess> LVerticalProcesses { get; set; } = new List<LVerticalProcess>();
+
+    public virtual ICollection<QuoteVertical> QuoteVerticals { get; set; } = new List<QuoteVertical>();
 }

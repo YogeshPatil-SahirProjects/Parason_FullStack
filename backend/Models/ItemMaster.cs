@@ -1,40 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Parason_Api.Models
+namespace Parason_Api.Models;
+
+public partial class ItemMaster
 {
-    [Table("ItemMaster", Schema = "dbo")]
-    public class ItemMaster
-    {
-        [Key]
-        public int ItemId { get; set; }
+    public int ItemId { get; set; }
 
-        [Required, MaxLength(50)]
-        public string ItemCode { get; set; } = string.Empty;
+    public string ItemCode { get; set; } = null!;
 
-        [Required, MaxLength(200)]
-        public string ItemName { get; set; } = string.Empty;
+    public string ItemName { get; set; } = null!;
 
-        [Required, MaxLength(20)]
-        public string UOM { get; set; } = "EA";
+    public string Uom { get; set; } = null!;
 
-        public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }
 
-        [MaxLength(100)]
-        public string CreatedBy { get; set; } = "System";
+    public string CreatedBy { get; set; } = null!;
 
-        [MaxLength(100)]
-        public string? Description { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
-        public DateTime? ModifiedAt { get; set; }
+    public string? ModifiedBy { get; set; }
 
-        [MaxLength(100)]
-        public string? ModifiedBy { get; set; }
+    public virtual ICollection<Price> Prices { get; set; } = new List<Price>();
 
-        // Navigation properties
-        public virtual ICollection<Price> Prices { get; set; } = new List<Price>();
-        public virtual ICollection<ScopeOfSupply> ScopeOfSupplies { get; set; } = new List<ScopeOfSupply>();
-    }
+    public virtual ICollection<ScopeOfSupply> ScopeOfSupplies { get; set; } = new List<ScopeOfSupply>();
 }
