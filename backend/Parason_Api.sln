@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parason_Api", "Parason_Api.csproj", "{9D873CD6-6D36-ACAD-E6D0-ED60A6464C70}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9D873CD6-6D36-ACAD-E6D0-ED60A6464C70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D873CD6-6D36-ACAD-E6D0-ED60A6464C70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D873CD6-6D36-ACAD-E6D0-ED60A6464C70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D873CD6-6D36-ACAD-E6D0-ED60A6464C70}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7D5ECA2E-7AE1-4C47-AA0A-893EE05DD961}
+	EndGlobalSection
+EndGlobal

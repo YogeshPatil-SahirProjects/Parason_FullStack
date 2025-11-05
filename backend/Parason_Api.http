@@ -1,0 +1,6 @@
+@Parason_Api_HostAddress = http://localhost:5228
+
+GET {{Parason_Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
