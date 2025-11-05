@@ -7,6 +7,7 @@ namespace Parason_Api.Models
     public class QuoteHeader
     {
         [Key, Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int QuoteID { get; set; }
 
         [Key, Column(Order = 1)]
