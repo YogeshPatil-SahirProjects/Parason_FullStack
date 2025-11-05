@@ -8,6 +8,7 @@ interface QuoteFormProps {
 }
 
 interface FormErrors {
+    quoteNumber?: string;
     quoteName?: string;
     customerName?: string;
     status?: string;
@@ -17,6 +18,7 @@ interface FormErrors {
 
 const QuoteForm: React.FC<QuoteFormProps> = ({ onNavigate }) => {
     const [formData, setFormData] = useState<CreateQuoteHeaderDto>({
+        quoteNumber: "",
         quoteName: "",
         customerName: "",
         status: "Draft",
@@ -35,6 +37,10 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ onNavigate }) => {
 
     const validateForm = (): boolean => {
         const newErrors: FormErrors = {};
+
+        if (!formData.quoteNumber.trim()) {
+            newErrors.quoteNumber = "Quote number is required";
+        }
 
         if (!formData.quoteName.trim()) {
             newErrors.quoteName = "Quote name is required";
@@ -139,6 +145,27 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ onNavigate }) => {
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="p-6">
                         <div className="space-y-6">
+                            {/* Quote Number */}
+                            <div>
+                                <label htmlFor="quoteNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Quote Number <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="quoteNumber"
+                                    name="quoteNumber"
+                                    value={formData.quoteNumber}
+                                    onChange={handleInputChange}
+                                    className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                        errors.quoteNumber ? "border-red-500" : "border-gray-300"
+                                    }`}
+                                    placeholder="Enter quote number"
+                                />
+                                {errors.quoteNumber && (
+                                    <p className="mt-1 text-sm text-red-600">{errors.quoteNumber}</p>
+                                )}
+                            </div>
+
                             {/* Quote Name */}
                             <div>
                                 <label htmlFor="quoteName" className="block text-sm font-medium text-gray-700 mb-1">
