@@ -110,7 +110,7 @@ public class SpecDetailService : ISpecDetailService
             AttributeName = item.Attribute?.AttributeName,
             EquipmentName = item.Equipment?.EquipmentName,
             ModelName = item.Model?.ModelName,
-            ListValueDisplay = item.ListValue?.ListValue
+            ListValueDisplay = item.ListValue?.Display
         };
     }
 }
