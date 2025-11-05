@@ -1,10 +1,20 @@
 -- Migration: Drop and Recreate QuoteHeader table with Identity on QuoteID
 -- This script will:
--- 1. Drop the existing QuoteHeader table (WARNING: This will delete all data!)
--- 2. Recreate it with QuoteID as an IDENTITY column
--- 3. Re-insert seed data
+-- 1. Drop foreign key constraints that reference QuoteHeader
+-- 2. Drop the existing QuoteHeader table (WARNING: This will delete all data!)
+-- 3. Recreate it with QuoteID as an IDENTITY column
+-- 4. Re-insert seed data
+-- 5. Recreate the foreign key constraints
 
--- Drop the existing QuoteHeader table
+-- Step 1: Drop the foreign key constraint from Quote_Vertical to QuoteHeader
+IF EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'FK_Quote_Vertical_QuoteHeader_QuoteID_QuoteRevision')
+BEGIN
+    ALTER TABLE [dbo].[Quote_Vertical]
+    DROP CONSTRAINT [FK_Quote_Vertical_QuoteHeader_QuoteID_QuoteRevision];
+END
+GO
+
+-- Step 2: Drop the existing QuoteHeader table
 IF OBJECT_ID('[dbo].[QuoteHeader]', 'U') IS NOT NULL
 BEGIN
     DROP TABLE [dbo].[QuoteHeader];
@@ -46,6 +56,14 @@ VALUES
      '2025-01-01', 'Yogesh Patil');
 
 SET IDENTITY_INSERT [dbo].[QuoteHeader] OFF;
+GO
+
+-- Step 5: Recreate the foreign key constraint from Quote_Vertical to QuoteHeader
+ALTER TABLE [dbo].[Quote_Vertical]
+ADD CONSTRAINT [FK_Quote_Vertical_QuoteHeader_QuoteID_QuoteRevision]
+    FOREIGN KEY ([QuoteID], [QuoteRevision])
+    REFERENCES [dbo].[QuoteHeader] ([QuoteID], [QuoteRevision])
+    ON DELETE NO ACTION;
 GO
 
 -- Verify the table was created with identity

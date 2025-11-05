@@ -10,12 +10,18 @@ namespace Parason_Api.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            // Drop the existing QuoteHeader table completely
+            // Step 1: Drop the foreign key constraint from Quote_Vertical to QuoteHeader
+            migrationBuilder.DropForeignKey(
+                name: "FK_Quote_Vertical_QuoteHeader_QuoteID_QuoteRevision",
+                schema: "dbo",
+                table: "Quote_Vertical");
+
+            // Step 2: Drop the existing QuoteHeader table
             migrationBuilder.DropTable(
                 name: "QuoteHeader",
                 schema: "dbo");
 
-            // Recreate the QuoteHeader table with QuoteID as IDENTITY
+            // Step 3: Recreate the QuoteHeader table with QuoteID as IDENTITY
             migrationBuilder.CreateTable(
                 name: "QuoteHeader",
                 schema: "dbo",
@@ -41,7 +47,7 @@ namespace Parason_Api.Migrations
                     table.PrimaryKey("PK_QuoteHeader", x => new { x.QuoteID, x.QuoteRevision });
                 });
 
-            // Re-insert seed data
+            // Step 4: Re-insert seed data
             migrationBuilder.InsertData(
                 schema: "dbo",
                 table: "QuoteHeader",
@@ -51,17 +57,34 @@ namespace Parason_Api.Migrations
                     { 1, (byte)1, "Q-2025-001", "First Demo Quote", "ABC Industries", "Draft", "INR", 30, "Seed sample quote", new DateTime(2025, 1, 1), "System", new DateTime(2025, 1, 1), "Yogesh Patil" },
                     { 2, (byte)1, "Q-2025-002", "Second Demo Quote", "XYZ Manufacturing", "Approved", "USD", 45, "Second seed record", new DateTime(2025, 1, 2), "System", new DateTime(2025, 1, 1), "Yogesh Patil" }
                 });
+
+            // Step 5: Recreate the foreign key constraint from Quote_Vertical to QuoteHeader
+            migrationBuilder.AddForeignKey(
+                name: "FK_Quote_Vertical_QuoteHeader_QuoteID_QuoteRevision",
+                schema: "dbo",
+                table: "Quote_Vertical",
+                columns: new[] { "QuoteID", "QuoteRevision" },
+                principalSchema: "dbo",
+                principalTable: "QuoteHeader",
+                principalColumns: new[] { "QuoteID", "QuoteRevision" },
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            // Drop the table
+            // Step 1: Drop the foreign key constraint
+            migrationBuilder.DropForeignKey(
+                name: "FK_Quote_Vertical_QuoteHeader_QuoteID_QuoteRevision",
+                schema: "dbo",
+                table: "Quote_Vertical");
+
+            // Step 2: Drop the table
             migrationBuilder.DropTable(
                 name: "QuoteHeader",
                 schema: "dbo");
 
-            // Recreate the table without identity (reverting to previous state)
+            // Step 3: Recreate the table without identity (reverting to previous state)
             migrationBuilder.CreateTable(
                 name: "QuoteHeader",
                 schema: "dbo",
@@ -86,7 +109,7 @@ namespace Parason_Api.Migrations
                     table.PrimaryKey("PK_QuoteHeader", x => new { x.QuoteID, x.QuoteRevision });
                 });
 
-            // Re-insert seed data
+            // Step 4: Re-insert seed data
             migrationBuilder.InsertData(
                 schema: "dbo",
                 table: "QuoteHeader",
@@ -96,6 +119,17 @@ namespace Parason_Api.Migrations
                     { 1, (byte)1, "Q-2025-001", "First Demo Quote", "ABC Industries", "Draft", "INR", 30, "Seed sample quote", new DateTime(2025, 1, 1), "System", new DateTime(2025, 1, 1), "Yogesh Patil" },
                     { 2, (byte)1, "Q-2025-002", "Second Demo Quote", "XYZ Manufacturing", "Approved", "USD", 45, "Second seed record", new DateTime(2025, 1, 2), "System", new DateTime(2025, 1, 1), "Yogesh Patil" }
                 });
+
+            // Step 5: Recreate the foreign key constraint
+            migrationBuilder.AddForeignKey(
+                name: "FK_Quote_Vertical_QuoteHeader_QuoteID_QuoteRevision",
+                schema: "dbo",
+                table: "Quote_Vertical",
+                columns: new[] { "QuoteID", "QuoteRevision" },
+                principalSchema: "dbo",
+                principalTable: "QuoteHeader",
+                principalColumns: new[] { "QuoteID", "QuoteRevision" },
+                onDelete: ReferentialAction.Restrict);
         }
     }
 }
