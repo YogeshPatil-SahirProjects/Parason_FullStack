@@ -126,10 +126,10 @@ namespace Parason_Api.Services
                 QuoteNumber = dto.QuoteNumber,
                 QuoteName = dto.QuoteName,
                 CustomerName = dto.CustomerName,
+                Status = dto.Status,
                 Currency = dto.Currency,
                 ValidityDays = dto.ValidityDays,
                 Notes = dto.Notes,
-                Status = "Draft",
                 QuoteRevision = 0,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = createdBy
