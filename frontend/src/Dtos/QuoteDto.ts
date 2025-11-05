@@ -36,3 +36,12 @@ export interface PaginationParams {
     sortBy?: string;
     sortDescending: boolean;
 }
+
+export interface CreateQuoteHeaderDto {
+    quoteName: string;
+    customerName: string;
+    status: string;
+    currency: string;
+    validityDays: number;
+    notes?: string;
+}

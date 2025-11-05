@@ -2,14 +2,14 @@ import { useState } from 'react';
 import Navbar from './Component/Navbar';
 import QuotesTable from './Component/QuotesTable';
 import About from './Component/About';
-
+import QuoteForm from './Component/QuoteForm';
 
 interface User {
     name: string;
     email: string;
 }
 
-type Page = 'home' | 'about';
+type Page = 'home' | 'about' | 'createQuote';
 
 function App() {
     const [currentUser] = useState<User>({
@@ -39,8 +39,10 @@ function App() {
             />
             {currentPage === 'home' ? (
                 <main className="container mx-auto px-2 py-2">
-                    <QuotesTable />
+                    <QuotesTable onNavigate={handleNavigate} />
                 </main>
+            ) : currentPage === 'createQuote' ? (
+                <QuoteForm onNavigate={handleNavigate} />
             ) : (
                 <About />
             )}
