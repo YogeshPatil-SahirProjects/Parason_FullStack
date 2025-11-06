@@ -154,8 +154,12 @@ public class QuoteHeaderService : IQuoteHeaderService
                 : query.OrderByDescending(q => q.CreatedAt)
         };
 
-        // Apply pagination
+        // Apply pagination and include QuoteVerticals
         var items = await query
+            .Include(q => q.QuoteVerticals)
+                .ThenInclude(qv => qv.Vertical)
+            .Include(q => q.QuoteVerticals)
+                .ThenInclude(qv => qv.Process)
             .Skip((searchDto.PageNumber - 1) * searchDto.PageSize)
             .Take(searchDto.PageSize)
             .Select(q => MapToDto(q))
@@ -186,7 +190,20 @@ public class QuoteHeaderService : IQuoteHeaderService
             CreatedAt = quote.CreatedAt,
             CreatedBy = quote.CreatedBy,
             ModifiedAt = quote.ModifiedAt,
-            ModifiedBy = quote.ModifiedBy
+            ModifiedBy = quote.ModifiedBy,
+            QuoteVerticals = quote.QuoteVerticals?.Select(qv => new QuoteVerticalDto
+            {
+                RecordId = qv.RecordId,
+                QuoteId = qv.QuoteId,
+                QuoteRevision = qv.QuoteRevision,
+                Layer = qv.Layer,
+                VerticalId = qv.VerticalId,
+                ProcessId = qv.ProcessId,
+                CreatedAt = qv.CreatedAt,
+                CreatedBy = qv.CreatedBy,
+                VerticalName = qv.Vertical?.VerticalName,
+                ProcessName = qv.Process?.ProcessName
+            }).ToList()
         };
     }
 }

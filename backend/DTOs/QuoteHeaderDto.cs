@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Parason_Api.DTOs;
 
@@ -17,6 +18,7 @@ public class QuoteHeaderDto
     public string CreatedBy { get; set; } = null!;
     public DateTime? ModifiedAt { get; set; }
     public string? ModifiedBy { get; set; }
+    public List<QuoteVerticalDto>? QuoteVerticals { get; set; }
 }
 
 public class CreateQuoteHeaderDto
