@@ -359,7 +359,7 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
             {/* ✅ Show first vertical of selected quote or message if no verticals */}
             {selectedQuote && (
                 <div className="mt-2">
-                    {selectedQuote.quoteVerticals && selectedQuote.quoteVerticals.length > 0 ? (
+                    {selectedQuote.quoteVerticals?.length ? (
                         <QuotesVertical
                             quoteId={selectedQuote.quoteId}
                             quoteRevision={selectedQuote.quoteRevision}
