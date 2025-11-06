@@ -128,7 +128,7 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
         if (selectedProcess?.equipments && selectedProcess.equipments.length > 0) {
             const firstEquipment = selectedProcess.equipments[0];
             setExpandedEquipment(new Set([firstEquipment.equipmentID]));
-            if (firstEquipment.series && firstEquipment.series.length > 0) {
+            if (firstEquipment?.series && firstEquipment.series.length > 0) {
                 setExpandedSeries(new Set([firstEquipment.series[0].seriesID]));
             }
         }
@@ -147,8 +147,25 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
             );
             if (!response.ok) throw new Error("Failed to fetch vertical details");
             const data = await response.json();
+
+            // Ensure arrays have default values if undefined
+            if (data) {
+                data.processes = data.processes || [];
+                data.processes.forEach((process: ProcessDto) => {
+                    process.equipments = process.equipments || [];
+                    process.scopeItems = process.scopeItems || [];
+                    process.specifications = process.specifications || [];
+                    process.equipments.forEach((equipment: EquipmentDto) => {
+                        equipment.series = equipment.series || [];
+                        equipment.series.forEach((series: SeriesDto) => {
+                            series.models = series.models || [];
+                        });
+                    });
+                });
+            }
+
             setVertical(data);
-            if (data.processes?.length > 0) setSelectedProcess(data.processes[0]);
+            if (data?.processes?.length > 0) setSelectedProcess(data.processes[0]);
         } catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred");
         } finally {
@@ -188,8 +205,18 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
 
     /* ------------------- TAB CONTENT RENDERERS ------------------- */
     const renderEquipmentTab = (process: ProcessDto) => {
-        const totalModels = process.equipments.reduce(
-            (sum, eq) => sum + eq.series.reduce((s, ser) => s + ser.models.length, 0),
+        const equipments = process.equipments || [];
+
+        if (equipments.length === 0) {
+            return (
+                <div className="text-center py-8 text-gray-500">
+                    No equipment configured for this process
+                </div>
+            );
+        }
+
+        const totalModels = equipments.reduce(
+            (sum, eq) => sum + (eq.series || []).reduce((s, ser) => s + (ser.models || []).length, 0),
             0
         );
 
@@ -197,15 +224,16 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
             <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm text-gray-600 pb-2 border-b">
                     <span>
-                        <strong>{process.equipments.length}</strong> Equipment •{" "}
+                        <strong>{equipments.length}</strong> Equipment •{" "}
                         <strong>{totalModels}</strong> Models
                     </span>
                 </div>
 
-                {process.equipments.map((equipment, equipmentIndex) => {
+                {equipments.map((equipment, equipmentIndex) => {
                     const isExpanded = expandedEquipment.has(equipment.equipmentID);
-                    const modelCount = equipment.series.reduce(
-                        (sum, s) => sum + s.models.length,
+                    const series = equipment.series || [];
+                    const modelCount = series.reduce(
+                        (sum, s) => sum + (s.models || []).length,
                         0
                     );
 
@@ -232,7 +260,7 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
                                     <CodeBadge text={equipment.equipmentCode} color="bg-blue-600" />
                                 </div>
                                 <span className="text-xs text-gray-500">
-                                    {equipment.series.length} Series • {modelCount} Models
+                                    {series.length} Series • {modelCount} Models
                                 </span>
                             </button>
 
@@ -245,17 +273,18 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
                                         </p>
                                     )}
 
-                                    {equipment.series.map((series, seriesIndex) => {
-                                        const isSeriesExpanded = expandedSeries.has(series.seriesID);
+                                    {series.map((seriesItem, seriesIndex) => {
+                                        const isSeriesExpanded = expandedSeries.has(seriesItem.seriesID);
+                                        const models = seriesItem.models || [];
 
                                         return (
                                             <div
-                                                key={`equipment-${equipment.equipmentID}-series-${series.seriesID}-idx-${seriesIndex}`}
+                                                key={`equipment-${equipment.equipmentID}-series-${seriesItem.seriesID}-idx-${seriesIndex}`}
                                                 className="border border-gray-100 rounded overflow-hidden"
                                             >
                                                 {/* Series Header */}
                                                 <button
-                                                    onClick={() => toggleSeries(series.seriesID)}
+                                                    onClick={() => toggleSeries(seriesItem.seriesID)}
                                                     className="w-full flex items-center justify-between p-2 bg-purple-50 hover:bg-purple-100 transition-colors"
                                                 >
                                                     <div className="flex items-center gap-2">
@@ -266,29 +295,29 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
                                                         )}
                                                         <Boxes className="w-3 h-3 text-purple-500" />
                                                         <span className="text-sm font-medium text-gray-800">
-                                                            {series.seriesName}
+                                                            {seriesItem.seriesName}
                                                         </span>
                                                         <CodeBadge
-                                                            text={series.seriesCode}
+                                                            text={seriesItem.seriesCode}
                                                             color="bg-purple-500"
                                                         />
                                                     </div>
                                                     <span className="text-xs text-gray-500">
-                                                        {series.models.length} Models
+                                                        {models.length} Models
                                                     </span>
                                                 </button>
 
                                                 {/* Models */}
                                                 {isSeriesExpanded && (
                                                     <div className="p-2 space-y-1 bg-white">
-                                                        {series.description && (
+                                                        {seriesItem.description && (
                                                             <p className="text-xs text-gray-600 mb-2">
-                                                                {series.description}
+                                                                {seriesItem.description}
                                                             </p>
                                                         )}
-                                                        {series.models.map((model, modelIndex) => (
+                                                        {models.map((model, modelIndex) => (
                                                             <div
-                                                                key={`series-${series.seriesID}-model-${model.modelID}-idx-${modelIndex}`}
+                                                                key={`series-${seriesItem.seriesID}-model-${model.modelID}-idx-${modelIndex}`}
                                                                 className="flex items-start justify-between p-2 bg-indigo-50 rounded hover:bg-indigo-100 transition-colors"
                                                             >
                                                                 <div className="flex-1">
@@ -497,28 +526,45 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
     };
 
     /* ------------------- LEFT SIDEBAR ------------------- */
-    const renderProcessList = () => (
-        <div className="h-full flex flex-col">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b">
-                <h4 className="text-sm font-semibold text-gray-700 flex items-center">
-                    <Workflow className="w-4 h-4 text-green-600 mr-1" /> Processes
-                </h4>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
-                    {vertical?.processes.length}
-                </span>
-            </div>
+    const renderProcessList = () => {
+        const processes = vertical?.processes || [];
 
-            <div className="flex-1 overflow-y-auto pr-2">
-                <ul className="space-y-2">
-                    {vertical?.processes.map((p, processIndex) => {
-                        const selected = selectedProcess?.processID === p.processID;
-                        const equipmentCount = p.equipments.length;
-                        const modelCount = p.equipments.reduce(
-                            (sum, eq) =>
-                                sum + eq.series.reduce((s, ser) => s + ser.models.length, 0),
-                            0
-                        );
-                        const itemsCount = p.scopeItems.length;                       
+        if (processes.length === 0) {
+            return (
+                <div className="h-full flex flex-col items-center justify-center text-center p-4">
+                    <Workflow className="w-12 h-12 text-gray-300 mb-3" />
+                    <p className="text-gray-600 font-medium">No Processes Configured</p>
+                    <p className="text-gray-500 text-xs mt-1">
+                        This vertical does not have any processes configured yet.
+                    </p>
+                </div>
+            );
+        }
+
+        return (
+            <div className="h-full flex flex-col">
+                <div className="flex items-center justify-between mb-4 pb-3 border-b">
+                    <h4 className="text-sm font-semibold text-gray-700 flex items-center">
+                        <Workflow className="w-4 h-4 text-green-600 mr-1" /> Processes
+                    </h4>
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                        {processes.length}
+                    </span>
+                </div>
+
+                <div className="flex-1 overflow-y-auto pr-2">
+                    <ul className="space-y-2">
+                        {processes.map((p, processIndex) => {
+                            const selected = selectedProcess?.processID === p.processID;
+                            const equipments = p.equipments || [];
+                            const scopeItems = p.scopeItems || [];
+                            const equipmentCount = equipments.length;
+                            const modelCount = equipments.reduce(
+                                (sum, eq) =>
+                                    sum + (eq.series || []).reduce((s, ser) => s + (ser.models || []).length, 0),
+                                0
+                            );
+                            const itemsCount = scopeItems.length;                       
 
                         return (
                             <li key={`vertical-${vertical.verticalID}-process-${p.processID}-idx-${processIndex}`}>
@@ -548,12 +594,13 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
                                     </div>
                                 </button>
                             </li>
-                        );
-                    })}
-                </ul>
+                            );
+                        })}
+                    </ul>
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     /* ------------------- TABS ------------------- */
     const renderTabs = () => {
@@ -653,12 +700,22 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
             </div>
         );
 
-    if (!vertical)
+    if (!vertical || !vertical.processes || vertical.processes.length === 0) {
         return (
-            <p className="text-center text-gray-500 italic py-6">
-                Select a quote to view vertical details.
-            </p>
+            <section className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                <div className="flex flex-col items-center justify-center text-center p-12">
+                    <Workflow className="w-16 h-16 text-gray-300 mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                        No Vertical Configuration Found
+                    </h3>
+                    <p className="text-gray-500 max-w-md">
+                        Vertical configuration has not been set up for this quote.
+                        Please configure the vertical to view processes, equipment, and scope details.
+                    </p>
+                </div>
+            </section>
         );
+    }
 
     return (
         <section className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
