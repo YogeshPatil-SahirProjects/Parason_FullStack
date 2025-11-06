@@ -567,7 +567,7 @@ const QuotesVerticalImproved: React.FC<QuotesVerticalProps> = ({
                             const itemsCount = scopeItems.length;                       
 
                         return (
-                            <li key={`vertical-${vertical.verticalID}-process-${p.processID}-idx-${processIndex}`}>
+                            <li key={`vertical-${vertical?.verticalID}-process-${p.processID}-idx-${processIndex}`}>
                                 <button
                                     onClick={() => {
                                         setSelectedProcess(p);

@@ -46,10 +46,6 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
     const [sortDescending, setSortDescending] = useState<boolean>(false);
     const [searchInput, setSearchInput] = useState<string>("");
 
-    useEffect(() => {
-        fetchQuotes();
-    }, [pageNumber, pageSize, searchTerm, sortBy, sortDescending, fetchQuotes]);
-
     const fetchQuotes = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -72,6 +68,10 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
             setLoading(false);
         }
     }, [pageNumber, pageSize, searchTerm, sortBy, sortDescending]);
+
+    useEffect(() => {
+        fetchQuotes();
+    }, [fetchQuotes]);
 
     // ✅ Auto-select first quote if not already selected
     useEffect(() => {
@@ -141,7 +141,7 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
 
     return (
         <>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200"> 
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                 {/* Header */}
                 <div className="px-6 py-2 border-b border-gray-200 flex items-center justify-between">
                     {/* Title inline */}
@@ -357,7 +357,6 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
                 )}
             </div>
 
-            {/* ✅ Show first vertical of selected quote */}
             {/* ✅ Show first vertical of selected quote or message if no verticals */}
             {selectedQuote && (
                 <div className="mt-2">
