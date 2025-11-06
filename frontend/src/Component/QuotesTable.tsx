@@ -48,7 +48,7 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
 
     useEffect(() => {
         fetchQuotes();
-    }, [pageNumber, pageSize, searchTerm, sortBy, sortDescending]);
+    }, [pageNumber, pageSize, searchTerm, sortBy, sortDescending, fetchQuotes]);
 
     const fetchQuotes = useCallback(async () => {
         setLoading(true);
@@ -64,11 +64,6 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
 
             setQuotes(data.items);
             setTotalCount(data.totalCount);
-
-            // ✅ Auto-select first quote if not already selected
-            if (data.items.length > 0 && !selectedQuote) {
-                setSelectedQuote(data.items[0]);
-            }
         } catch (err) {
             const message = err instanceof Error ? err.message : "An error occurred";
             setError(message);
@@ -76,7 +71,14 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
         } finally {
             setLoading(false);
         }
-    }, [pageNumber, pageSize, searchTerm, sortBy, sortDescending]); // Add dependencies here
+    }, [pageNumber, pageSize, searchTerm, sortBy, sortDescending]);
+
+    // ✅ Auto-select first quote if not already selected
+    useEffect(() => {
+        if (quotes.length > 0 && !selectedQuote) {
+            setSelectedQuote(quotes[0]);
+        }
+    }, [quotes, selectedQuote]);
 
     const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
