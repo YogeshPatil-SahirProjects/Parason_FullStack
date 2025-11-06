@@ -360,7 +360,7 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
             {/* ✅ Show first vertical of selected quote or message if no verticals */}
             {selectedQuote && (
                 <div className="mt-2">
-                    {selectedQuote.quoteVerticals?.length ? (
+                    {selectedQuote.quoteVerticals && selectedQuote.quoteVerticals.length > 0 ? (
                         <QuotesVertical
                             quoteId={selectedQuote.quoteId}
                             quoteRevision={selectedQuote.quoteRevision}
@@ -375,6 +375,25 @@ const QuotesTable: React.FC<QuotesTableProps> = ({ onNavigate }) => {
                             </p>
                         </div>
                     )}
+                </div>
+            )}
+
+            {/* Show message when no quotes are available */}
+            {!loading && quotes.length === 0 && !selectedQuote && (
+                <div className="mt-2 bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                    <FileText className="w-12 h-12 mx-auto text-gray-300 mb-3" />
+                    <p className="text-gray-600 font-medium">No Quotes Available</p>
+                    <p className="text-gray-500 text-sm mt-1">
+                        Create your first quote to get started.
+                    </p>
+                    <button
+                        type="button"
+                        onClick={() => onNavigate('createQuote')}
+                        className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium inline-flex items-center space-x-2"
+                    >
+                        <Plus className="w-4 h-4" />
+                        <span>Create Quote</span>
+                    </button>
                 </div>
             )}
         </>
